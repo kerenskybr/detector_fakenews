@@ -64,4 +64,4 @@ csv = pd.DataFrame()
 csv['title'] = list_title
 csv['url'] = list_url
 
-csv.to_csv('ElPais03.csv')
+csv.to_csv('el_pais.csv')
