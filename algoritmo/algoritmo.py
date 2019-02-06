@@ -33,7 +33,8 @@ verdadeira = verdadeira.drop(verdadeira.index[900:])
 
 verdadeira = verdadeira.drop(columns=['quant'])
 
-# 1 para verdadeiro, 0 para falso
+#Atribuindo a classe classificadora
+# 1 para falso, 0 para verdadeiro
 
 falsa['label'] = 1
 verdadeira['label'] = 0
@@ -42,9 +43,13 @@ print(falsa.head(5))
 
 print(verdadeira.head(5))
 
+#Jutando os dois datasets em um so
+
 dados = pd.concat([verdadeira,falsa])
 
 print(dados)
+
+#Label encoder transforma valores categoricos em numericos
 
 label_encoder = preprocessing.LabelEncoder()
 
@@ -66,6 +71,8 @@ print(x_test.shape)
 #Baixando o 'bag of words'
 #nltk.download('stopwords')
 
+#Vetorizando palavras para numeros
+
 pt_stopwords = set(nltk.corpus.stopwords.words('portuguese'))
 
 tfidf = TfidfVectorizer(min_df = 3, strip_accents = 'unicode', max_features = 3000,
@@ -75,7 +82,9 @@ tfidf = TfidfVectorizer(min_df = 3, strip_accents = 'unicode', max_features = 30
 x_train_tfidf = tfidf.fit_transform(x_train)
 x_test_tfidf = tfidf.transform(x_test)
 
+#################################
 #Testando com Regressao Logistica
+#################################
 
 classificador = LogisticRegression()
 classificador.fit(x_train_tfidf, y_train)
@@ -84,7 +93,10 @@ preditor_lr = classificador.predict_proba(x_test_tfidf)
 
 print('Acuracia do modelo LR: ',classificador.score(x_test_tfidf, y_test))
 
+#########################
 #Testando com Naive Bayes
+#########################
+
 clf = MultinomialNB().fit(x_train_tfidf,y_train)
 
 preditor_nb = clf.predict(x_test_tfidf)
@@ -92,7 +104,9 @@ preditor_nb = clf.predict(x_test_tfidf)
 
 print('Acuracia do modelo NB: ',np.mean(preditor_nb == y_test))
 
+#################
 #Testando com SVM
+#################
 
 clf_svm = svm.SVC(gamma=0.001)
 clf_svm.fit(x_train_tfidf, y_train)
