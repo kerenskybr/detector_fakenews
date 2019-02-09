@@ -18,6 +18,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 from sklearn import svm
+from sklearn.externals import joblib
 
 import nltk
 
@@ -39,15 +40,15 @@ verdadeira = verdadeira.drop(columns=['quant'])
 falsa['label'] = 1
 verdadeira['label'] = 0
 
-print(falsa.head(5))
+#print(falsa.head(5))
 
-print(verdadeira.head(5))
+#print(verdadeira.head(5))
 
 #Jutando os dois datasets em um so
 
 dados = pd.concat([verdadeira,falsa])
 
-print(dados)
+#print(dados)
 
 #Label encoder transforma valores categoricos em numericos
 
@@ -56,15 +57,22 @@ label_encoder = preprocessing.LabelEncoder()
 y = label_encoder.fit_transform(dados.label.values)
 x = dados.titulo_noticia.values
 
+#print('printando x',x)
+
 #Stratify = retorna mesma proporção
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=43, test_size=.33, stratify=y)
 
-print(collections.Counter(y_train))
+#print(collections.Counter(y_train))
+
+#arq3 = "y_test.sav"
+#joblib.dump(y_test, arq3)
+
+
 
 collections.Counter(y_test)
 
-print(x_train.shape)
-print(x_test.shape)
+#print(x_train.shape)
+#print(x_test.shape)
 
 #TF-IDF
 
@@ -79,19 +87,45 @@ tfidf = TfidfVectorizer(min_df = 3, strip_accents = 'unicode', max_features = 30
                         analyzer = 'word', token_pattern = '\w{1,}',
                         ngram_range = (1,3), sublinear_tf = 1, stop_words = pt_stopwords)
 
+
+texto_teste = ['Exames de Boslonaro apontam pneumonia, diz boletim médico']
+
+
 x_train_tfidf = tfidf.fit_transform(x_train)
-x_test_tfidf = tfidf.transform(x_test)
+x_test_tfidf = tfidf.transform(texto_teste)
 
 #################################
 #Testando com Regressao Logistica
 #################################
+
+
+#testando = tfidf.transform(texto_teste)
+
+#print('TESTANDO', testando)
 
 classificador = LogisticRegression()
 classificador.fit(x_train_tfidf, y_train)
 
 preditor_lr = classificador.predict_proba(x_test_tfidf)
 
-print('Acuracia do modelo LR: ',classificador.score(x_test_tfidf, y_test))
+Xnew = [[...], [...]]
+ynew = classificador.predict_proba(Xnew)
+
+print('Acuracia do modelo LR: '
+	,classificador.score(x_test_tfidf, ynew))
+
+'''
+
+#Salvando o modelo
+
+arquivo = "modelo_reg_log.sav"
+joblib.dump(classificador, arquivo)
+
+arq2 = "tfid_saved.sav"
+joblib.dump(tfidf, arq2)
+
+
+
 
 #########################
 #Testando com Naive Bayes
@@ -101,6 +135,11 @@ clf = MultinomialNB().fit(x_train_tfidf,y_train)
 
 preditor_nb = clf.predict(x_test_tfidf)
 
+print(preditor_nb)
+
+arquivo = "modelo_naive.sav"
+joblib.dump(clf, arquivo)
+print('Modelo Naive Bayes salvo')
 
 print('Acuracia do modelo NB: ',np.mean(preditor_nb == y_test))
 
@@ -114,3 +153,5 @@ clf_svm.fit(x_train_tfidf, y_train)
 clf_svm.predict(x_test_tfidf)
 
 print('Acuracia do modelo SVM: ', clf_svm.score(x_test_tfidf, y_test, sample_weight=None))
+
+'''
