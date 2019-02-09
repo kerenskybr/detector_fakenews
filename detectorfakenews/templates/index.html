@@ -1,3 +1,6 @@
+{% block content %}
+
+
 <!DOCTYPE html>
 <html lang="pt_br">
 
@@ -55,13 +58,47 @@
           <h2 class="mb-5">Cole no espaço abaixo o link da notícia que deseja verificar: </h2>
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-          <form>
+          <!--
+          <form onsubmit="document.getElementsByTagName('title')[0];">
+          -->
+          <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            
             <div class="form-row">
+
               <div class="col-12 col-md-9 mb-2 mb-md-0">
-                <input type="url" class="form-control form-control-lg" placeholder="Cole aqui o link da notícia...">
+                {{ form.noticia(class="form-control form-control-lg") }}
+                
+                <!--
+                <input type="text" class="form-control form-control-lg" placeholder="Cole aqui o link da notícia...">
+                -->
               </div>
               <div class="col-12 col-md-3">
                 <button type="submit" class="btn btn-block btn-lg btn-primary">Verificar</button>
+              </div>
+
+              <div>
+                <br>
+                <h4>
+                  {{ titulo }}
+             
+              </h4>
+              </div>
+
+               <div>
+                <br>
+                <h4>
+                  {% if prev == [1] %}
+                  Notícia classificada como VERDADEIRA
+                  {% elif prev == [0] %}
+                  Notícia classificada como FALSA
+                  {% else %}
+
+                  {% endif %}
+             
+              </h4>
+              </div>
+
               </div>
             </div>
           </form>
@@ -69,7 +106,6 @@
       </div>
     </div>
 </header>
-
 
   <!-- Bootstrap core JavaScript -->
   <script src="../static/vendor/jquery/jquery.min.js"></script>
@@ -84,3 +120,5 @@
 </body>
 
 </html>
+
+{% endblock content %}
