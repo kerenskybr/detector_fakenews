@@ -45,7 +45,11 @@ def web_driver(path_to_driver, url):
 @app.route('/', methods=['GET', 'POST'])
 def index():
 
+	prev = []
+
 	titulo = []
+
+	exibe_titulo = ''
 
 	carrega_modelo = joblib.load(os.path.join(app.root_path, 'saves/modelo_reg_log.sav'))	
 
@@ -65,29 +69,16 @@ def index():
 		soup = BeautifulSoup(resposta.text, 'html.parser')
 
 		titulo = [soup.title.string]
-		#titulo = ['Exames de Bolsonaro apontam pneumonia, diz boletim médico']
-		#titulo = ['Artistas cubanos nos EUA gravam música “Levanta-te Capitão” para Bolsonaro ']
+
 		print(titulo)
 
-
+		exibe_titulo = str(titulo)[2:-2]
 
 		texto_fit = tfidf_load.transform(titulo)
 		
-
 		prev = carrega_modelo.predict(texto_fit)
-
-		print('Classificado como',prev)
-
-		if prev == [0]:
-			print('CLASSIFICADO COMO NOTICIA FALSA')
-			msg = 'CLASSIFICADO COMO NOTICIA FALSA'
-
-		if prev == [1]:
-			print('CLASSIFICADO COMO NOTICIA VERDADEIRA')
-			msg = 'CLASSIFICADO COMO NOTICIA VERDADEIRA'
-
 
 		#print(carrega_modelo.score(texto_fit, yteste))
 		
 
-	return render_template('index.html', form=form, titulo=titulo, prev=prev)
+	return render_template('index.html', form=form, exibe_titulo=exibe_titulo, prev=prev)
