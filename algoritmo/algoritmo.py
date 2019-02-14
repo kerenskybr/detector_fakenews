@@ -88,11 +88,8 @@ tfidf = TfidfVectorizer(min_df = 3, strip_accents = 'unicode', max_features = 30
                         ngram_range = (1,3), sublinear_tf = 1, stop_words = pt_stopwords)
 
 
-texto_teste = ['Exames de Boslonaro apontam pneumonia, diz boletim médico']
-
-
 x_train_tfidf = tfidf.fit_transform(x_train)
-x_test_tfidf = tfidf.transform(texto_teste)
+x_test_tfidf = tfidf.transform(x_test)
 
 #################################
 #Testando com Regressao Logistica
@@ -108,11 +105,10 @@ classificador.fit(x_train_tfidf, y_train)
 
 preditor_lr = classificador.predict_proba(x_test_tfidf)
 
-Xnew = [[...], [...]]
-ynew = classificador.predict_proba(Xnew)
 
-print('Acuracia do modelo LR: '
-	,classificador.score(x_test_tfidf, ynew))
+
+print('Acuracia do modelo Regressão Logística: '
+	,classificador.score(x_test_tfidf, y_test))
 
 '''
 
@@ -124,7 +120,7 @@ joblib.dump(classificador, arquivo)
 arq2 = "tfid_saved.sav"
 joblib.dump(tfidf, arq2)
 
-
+'''
 
 
 #########################
@@ -135,13 +131,12 @@ clf = MultinomialNB().fit(x_train_tfidf,y_train)
 
 preditor_nb = clf.predict(x_test_tfidf)
 
-print(preditor_nb)
-
+'''
 arquivo = "modelo_naive.sav"
 joblib.dump(clf, arquivo)
 print('Modelo Naive Bayes salvo')
-
-print('Acuracia do modelo NB: ',np.mean(preditor_nb == y_test))
+'''
+print('Acuracia do modelo Naive Bayes: ',np.mean(preditor_nb == y_test))
 
 #################
 #Testando com SVM
@@ -154,4 +149,3 @@ clf_svm.predict(x_test_tfidf)
 
 print('Acuracia do modelo SVM: ', clf_svm.score(x_test_tfidf, y_test, sample_weight=None))
 
-'''
