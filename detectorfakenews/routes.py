@@ -34,7 +34,7 @@ def web_driver(path_to_driver, url):
 	options = webdriver.ChromeOptions()
 	options.add_argument('headless')
 
-	driver = webdriver.Chrome('/home/roger/Documents/detector_fakenews/chrome_driver/chromedriver', 
+	driver = webdriver.Chrome('../chrome_driver/chromedriver', 
 									options=options)
 	driver.get(url)
 	source = driver.page_source
