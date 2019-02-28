@@ -30,7 +30,7 @@ falsa = falsa.drop(columns=['quant', 'tema'])
 
 #dropando itens para que ambos datasets tenham mesmo tamanho
 #ate arranjar mais dados para o outro
-verdadeira = verdadeira.drop(verdadeira.index[900:])
+verdadeira = verdadeira.drop(verdadeira.index[2714:])
 
 verdadeira = verdadeira.drop(columns=['quant'])
 
@@ -116,26 +116,27 @@ print('Acuracia do modelo Regressão Logística: '
 
 arquivo = "modelo_reg_log.sav"
 joblib.dump(classificador, arquivo)
-
+'''
 arq2 = "tfid_saved.sav"
 joblib.dump(tfidf, arq2)
 
-'''
+arquivo = "modelo_reg_log.sav"
+joblib.dump(classificador, arquivo)
 
 
 #########################
 #Testando com Naive Bayes
 #########################
-
+'''
 clf = MultinomialNB().fit(x_train_tfidf,y_train)
 
 preditor_nb = clf.predict(x_test_tfidf)
 
-'''
+
 arquivo = "modelo_naive.sav"
 joblib.dump(clf, arquivo)
 print('Modelo Naive Bayes salvo')
-'''
+
 print('Acuracia do modelo Naive Bayes: ',np.mean(preditor_nb == y_test))
 
 #################
@@ -149,3 +150,4 @@ clf_svm.predict(x_test_tfidf)
 
 print('Acuracia do modelo SVM: ', clf_svm.score(x_test_tfidf, y_test, sample_weight=None))
 
+'''

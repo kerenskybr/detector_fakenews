@@ -32,8 +32,7 @@ def web_driver(path_to_driver, url):
 	options = webdriver.ChromeOptions()
 	options.add_argument('headless')
 
-	driver = webdriver.Chrome('../chrome_driver/chromedriver', 
-									options=options)
+	driver = webdriver.Chrome('../chrome_driver/chromedriver', options=options)
 	driver.get(url)
 	source = driver.page_source
 	
@@ -49,18 +48,9 @@ def index():
 
 	exibe_titulo = ''
 
-	#carrega_modelo = joblib.load(os.path.join(app.root_path, 'saves/modelo_reg_log.sav'))	
+	carrega_modelo = joblib.load(os.path.join(app.root_path, 'saves/logistic_regression/modelo_reg_log.sav'))	
 
-	#tfidf_load = joblib.load(os.path.join(app.root_path, 'saves/tfid_saved.sav'))	
-
-	yteste = joblib.load(os.path.join(app.root_path, 'saves/y_test.sav'))	
-
-
-	carrega_modelo = joblib.load(os.path.join(app.root_path, 'saves/naive/modelo_naive.sav'))	
-
-	tfidf_load = joblib.load(os.path.join(app.root_path, 'saves/naive/tfid_saved.sav'))	
-
-
+	tfidf_load = joblib.load(os.path.join(app.root_path, 'saves/logistic_regression/tfid_saved.sav'))	
 
 	form = FormConsulta()
 
