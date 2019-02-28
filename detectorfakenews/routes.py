@@ -24,7 +24,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import preprocessing
 from sklearn.feature_extraction.text import CountVectorizer as count_vect
 
-import nltk
+#import nltk
 
 def web_driver(path_to_driver, url):
 	'''Função que carrega o driver do chrome'''

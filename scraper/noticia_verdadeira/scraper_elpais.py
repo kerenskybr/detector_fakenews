@@ -21,7 +21,7 @@ lista_corpo = []
 lista_url = []
 
 var = True
-pagina = 3 #30
+pagina = 30
 
 lista = []
 
