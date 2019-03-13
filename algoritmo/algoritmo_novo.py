@@ -19,6 +19,8 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn import svm
 from sklearn.externals import joblib
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import make_pipeline
 
 import nltk
 
@@ -37,43 +39,45 @@ verdadeira = pd.concat([ciencia, cultura, economia, esportes, estilo, internacio
 
 verdadeira = verdadeira.drop(columns=['id', 'titulo', 'url'])
 
+print(verdadeira.shape)
+
 falsa = falsa.drop(columns=['id', 'link', 'timestamp'])
 
 
-#Removendo números do dataframe
+#Removendo números e espaços do dataframe
 
-verdadeira['corpo'] = verdadeira['corpo'].str.replace(r'\d+','')
+#verdadeira['corpo'] = verdadeira['corpo'].str.replace(r'\d+','')
 
-falsa['corpo'] = falsa['corpo'].str.replace(r'\d+', '')
+#falsa['corpo'] = falsa['corpo'].str.replace(r'\d+', '')
 
 
 #Transformando letras todas para minúsculas
 
-verdadeira['corpo'] = verdadeira['corpo'].str.lower()
+#verdadeira['corpo'] = verdadeira['corpo'].str.lower()
 
-falsa['corpo'] = falsa['corpo'].str.lower()
+#falsa['corpo'] = falsa['corpo'].str.lower()
 
 #Removendo ruídos
-
+'''
 verdadeira['corpo'] = verdadeira['corpo'].str.replace('(){$%[^\w\s]','')
 
 falsa['corpo'] = falsa['corpo'].str.replace('(){$%[^\w\s]','')
 
 #Mantendo apenas os 1000 primeiros caracteres
 verdadeira['corpo'] = verdadeira['corpo'].map(lambda x: str(x)[:1000])
-
+'''
 #Aleatorizando as linhas, para que os assuntos se misturem
 verdadeira.sort_values(by='corpo', inplace=True)
 
 #Criando um novo indice apos randomizar as linhas
 verdadeira.reset_index(drop=True, inplace=True)
 
-
 #Deixando ambos datasets do mesmo tamanho
 verdadeira_droped = verdadeira.drop(verdadeira.index[1374:])
 
-#Subistituindo NaN values por espaços
-verda = verdadeira_droped.fillna(' ')
+#Subistituindo NaN values por espaços ou excluindo (deu no mesmo)
+#verda = verdadeira_droped.fillna('')
+verda = verdadeira_droped.dropna()
 
 #Atribuindo a classe classificadora
 # 1 para falso, 0 para verdadeiro
@@ -138,6 +142,10 @@ preditor_lr = classificador.predict_proba(x_test_tfidf)
 print('Acuracia do modelo Regressão Logística: '
 	,classificador.score(x_test_tfidf, y_test))
 
+#scores = cross_val_score(preditor_lr, x_train_tfidf, x_test_tfidf, cv=5)
+
+#print('Validação cruzada',scores)
+
 '''
 
 #Salvando o modelo
@@ -181,3 +189,12 @@ print('Acuracia do modelo SVM: ', clf_svm.score(x_test_tfidf, y_test, sample_wei
 
 reg = LinearRegression().fit(x_train_tfidf, y_train)
 print('Acuracia do modelo Regressao Linear: ', reg.score(x_train_tfidf, y_train)*100)
+
+
+
+clf = make_pipeline(TfidfVectorizer(min_df = 3, strip_accents = 'unicode', max_features = 3000,
+                        analyzer = 'word', token_pattern = '\w{1,}',
+                        ngram_range = (1,3), sublinear_tf = 1, encoding='utf-8', stop_words = pt_stopwords), svm.SVC(kernel='linear'))
+
+scores = cross_val_score(clf, x, y, cv=5)
+print(scores) 
