@@ -47,9 +47,9 @@ for url in tags.iloc[:,1][2:]:
                 list_title.append(obj.getText())
 
                 for link in obj.children:
-                        print('https:' + link.get('href'))
-                        list_url.append('https:' + link.get('href'))
-                        print(len(list_url)==len(list_title))
+                    print('https:' + link.get('href'))
+                    list_url.append('https:' + link.get('href'))
+                    print(len(list_url)==len(list_title))
         except:
             continue
             

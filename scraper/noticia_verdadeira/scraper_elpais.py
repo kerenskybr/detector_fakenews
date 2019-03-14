@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen
 
 import requests
-import time
+
 import csv
 
 import pandas as pd
@@ -14,14 +14,14 @@ import pandas as pd
 
 headers = {'User-Agent': 'Py_Scraper'}
 
-link = "https://brasil.elpais.com/seccion/tecnologia" 
+link = "https://brasil.elpais.com/seccion/politica" 
 
 lista_titulo = []
 lista_corpo = []
 lista_url = []
 
 var = True
-pagina = 30
+pagina = 100
 
 lista = []
 
@@ -40,15 +40,15 @@ while var:
         for titulo in soup.find_all('h2',{'class':'articulo-titulo'}):
             try:
 
-                print('TITULO:', titulo.getText())
+                #print('TITULO:', titulo.getText())
                 lista_titulo.append(titulo.getText())
             except:
                 lista_titulo.append('NaN')
 
             for end in titulo.children:
                 try:
-                    print('ENDEREÇO')
-                    print('https:' + end.get('href'))
+                    #print('ENDEREÇO')
+                    #print('https:' + end.get('href'))
 
                     visita = 'https:' + end.get('href')
                     lista_url.append(visita)
@@ -63,7 +63,7 @@ while var:
 
                 for corpo in soup_2.find_all('div', {'id':'cuerpo_noticia'}):
                     try:
-                        print('CORPO', corpo.getText().replace('\n',''))
+                        #print('CORPO', corpo.getText().replace('\n',''))
                         lista_corpo.append(corpo.getText().replace('\n', ''))
                     except:
                         lista_corpo.append('NaN')
@@ -75,11 +75,11 @@ while var:
         ao final, o arquivo é gravado
         '''
     print(endereco)
-    print('##########################PAGINA##################', pagina)
+    print('PAGINA: ', pagina)
           
     pagina-=1
 
-    if pagina <= 0:
+    if pagina <= 90:
         break
 
 
@@ -102,6 +102,6 @@ s1 = pd.Series(lista_titulo, name='titulo')
 s2 = pd.Series(lista_corpo, name='corpo')
 s3 = pd.Series(lista_url, name='url')
 
-s1.to_csv('s1.csv')
-s2.to_csv('s2.csv')
-s3.to_csv('s3.csv')
+final = pd.concat([s1, s2, s3], axis=1)
+
+final.to_csv('politica.csv')
