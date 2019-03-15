@@ -24,7 +24,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import preprocessing
 from sklearn.feature_extraction.text import CountVectorizer as count_vect
 
-#import nltk
+import re
 
 def web_driver(path_to_driver, url):
 	'''Função que carrega o driver do chrome'''
@@ -39,6 +39,13 @@ def web_driver(path_to_driver, url):
 	return BeautifulSoup(source, 'html.parser')
 
 
+def remove_html_tags(text):
+    """Remove html tags from a string"""
+    
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
 
@@ -46,7 +53,12 @@ def index():
 
 	titulo = []
 
+	##
+	corpo = []
+
 	exibe_titulo = ''
+
+	exibe_corpo = ''
 
 	carrega_modelo = joblib.load(os.path.join(app.root_path, 'saves/logistic_regression/modelo_reg_log.sav'))	
 
@@ -64,10 +76,19 @@ def index():
 
 		titulo = [soup.title.string]
 
-		print(titulo)
-
 		exibe_titulo = str(titulo)[2:-2]
+		
+		for corpo in soup.find_all(id='cuerpo_noticia'):
+			try:
+				corpo_texto = str(corpo.p)
+				
+				exibe_corpo = remove_html_tags(corpo_texto)
 
+			except:
+				exibe_corpo = "Desculpe, não consegui encontrar o texto desta notícia."
+
+		#exibe_corpo = str(exibe_corpo)[13:100] + ' . . .'
+		
 		texto_fit = tfidf_load.transform(titulo)
 		
 		prev = carrega_modelo.predict(texto_fit)
@@ -75,4 +96,9 @@ def index():
 		#print(carrega_modelo.score(texto_fit, yteste))
 		
 
-	return render_template('index.html', form=form, exibe_titulo=exibe_titulo, prev=prev)
+	return render_template('index.html', form=form, exibe_titulo=exibe_titulo, exibe_corpo=exibe_corpo, prev=prev)
+
+
+@app.route('/notas_versao')
+def notas_versao():
+	pass
