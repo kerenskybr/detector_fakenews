@@ -22,6 +22,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import make_pipeline
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import AdaBoostClassifier
 
 
 import nltk
@@ -239,7 +240,7 @@ print('Acuracia do modelo Regressão Logística: '
 clf_log_reg = make_pipeline(TfidfVectorizer(), LogisticRegression())
 
 
-scores_a = cross_val_score(clf_log_reg, x, y, cv=5)
+scores_a = cross_val_score(clf_log_reg, x, y, cv=10)
 print('Validação Cruzada Reg Log', scores_a) 
 
 
@@ -266,6 +267,24 @@ joblib.dump(classificador, arquivo)
 '''
 
 #########################
+#Testando com AdaBoost
+#######################
+
+clf_ada = AdaBoostClassifier(n_estimators=100, random_state=0)
+clf_ada.fit(x_train_tfidf, y_train)
+
+
+print('Acuracia AdaBoost',clf_ada.score(x_test_tfidf, y_test))
+
+clf_ada_pipe = make_pipeline(TfidfVectorizer(), MultinomialNB())
+
+scores = cross_val_score(clf_ada_pipe, x, y, cv=10)
+print('Validação Cruzada Ada', scores) 
+
+arquivo = "teste_ada.sav"
+joblib.dump(clf_ada, arquivo)
+
+#########################
 #Testando com Naive Bayes
 #########################
 
@@ -277,7 +296,7 @@ print('Acuracia do modelo Naive Bayes: ',np.mean(preditor_nb == y_test))
 
 clf_naive = make_pipeline(TfidfVectorizer(), MultinomialNB())
 
-scores = cross_val_score(clf_naive, x, y, cv=5)
+scores = cross_val_score(clf_naive, x, y, cv=10)
 print('Validação Cruzada Naive', scores) 
 
 mse_nb = mean_squared_error(y_test, clf_nb.predict(x_test_tfidf))
@@ -313,6 +332,8 @@ joblib.dump(tfidf, tfidf_save)
 # Acerto Miseravi # 
 texto = ["No dia 18 de dezembro de 2018 um meteoroide do tamanho de um ônibus explodiu na atmosfera a Terra com um impacto energético de 10 bombas atômicas. Esta foi a segunda maior explosão desde que a NASA começou a registrar esses impactos há 30 anos. O maior impacto de um meteoroide já registado foi o de fevereiro de 2013 sobre a Rússia. A explosão mais recente teve apenas 40% da liberação de energia da anterior. Apesar de toda esta intensidade, ninguém viu a explosão. Ao contrário do meteoroide de 2013 que foi visto, registrado e sentido por milhares de pessoas na cidade de Chelyabinsk, o impacto de 2018 ocorreu sobre o Mar de Bering entre a Sibéria e o Alasca. Esta região é bastante isolada."]
 
+#texto = ['Suzane von Richthofen foi recebida por ativistas dos direitos humanos ao sair da prisão']
+
 #Acerto miseravi # 
 #texto = ["Tomar chá de erva-doce é a melhor forma de se curar da gripe H1N1 já que a fórmula do Tamiflu, principal remédio para o tratamento "]
 
@@ -326,7 +347,11 @@ texto = ["No dia 18 de dezembro de 2018 um meteoroide do tamanho de um ônibus e
 
 #texto = texto.str.lower()
 
-carrega_modelo = joblib.load('modelo_reg_log.sav')
+#Melhor modelo no momento
+#carrega_modelo = joblib.load('modelo_reg_log.sav')
+carrega_modelo = joblib.load('teste_ada.sav')
+
+
 carrega_tfidf = joblib.load('tfid_teste.sav')
 
 texto_fit = carrega_tfidf.transform(texto)
@@ -334,9 +359,9 @@ texto_fit = carrega_tfidf.transform(texto)
 prev = carrega_modelo.predict(texto_fit)
 
 if prev == 0:
-    print('Noticia Classificada como verdadeira')
+    print('Noticia Classificada como verdadeira', prev)
 else:
-    print('Noticia Classificada como Falsa')
+    print('Noticia Classificada como Falsa', prev)
 
 '''
 reg = LinearRegression().fit(x_train_tfidf, y_train)
@@ -356,10 +381,16 @@ params = {'n_estimators': 333, 'max_depth': 8, 'min_samples_split': 2,
 clf_gra = GradientBoostingClassifier(**params).fit(x_train_tfidf, y_train)
 print(clf_gra.score(x_test_tfidf, y_test))
 
-mse = mean_squared_error(y_test, clf_gra.predict(x_test_tfidf))
-print("MSE: %.4f" % mse)
 
+clf_gra_pipe = make_pipeline(TfidfVectorizer(), MultinomialNB())
+
+scores = cross_val_score(clf_gra_pipe, x, y, cv=5)
+print('Validação Cruzada Gradiente Boosting', scores) 
+
+mse = mean_squared_error(y_test, clf_gra.predict(x_test_tfidf))
+print("MSE Gradiente Boosting: %.4f" % mse)
 '''
+
 '''
 arquivo = "teste_gra.sav"
 joblib.dump(clf_gra, arquivo)
