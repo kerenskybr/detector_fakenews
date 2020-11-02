@@ -26,6 +26,9 @@ from sklearn.feature_extraction.text import CountVectorizer as count_vect
 
 import re
 
+
+global api_prev 
+
 def web_driver(path_to_driver, url):
 	'''Função que carrega o driver do chrome'''
 
@@ -92,7 +95,9 @@ def index():
 		texto_fit = tfidf_load.transform(titulo)
 
 		prev = carrega_modelo.predict(texto_fit)
-		return prev
+		
+		api_prev = prev
+
 		#print(carrega_modelo.score(texto_fit, yteste))
 
 
@@ -100,8 +105,8 @@ def index():
 
 
 @app.route('/api')
-def api_return(prev):
-	return prev
+def api_return():
+	return api_prev
 
 @app.route('/notas_versao')
 def notas_versao():
