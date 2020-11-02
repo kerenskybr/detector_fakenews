@@ -92,12 +92,16 @@ def index():
 		texto_fit = tfidf_load.transform(titulo)
 
 		prev = carrega_modelo.predict(texto_fit)
-
+		return prev
 		#print(carrega_modelo.score(texto_fit, yteste))
 
 
 	return render_template('index.html', form=form, exibe_titulo=exibe_titulo, exibe_corpo=exibe_corpo, prev=prev)
 
+
+@app.route('/api')
+def api_return(prev):
+	return prev
 
 @app.route('/notas_versao')
 def notas_versao():
